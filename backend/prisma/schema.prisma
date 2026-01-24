@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
@@ -32,6 +32,7 @@ model Product {
   price           Float
   pickupLocation  String
   isSold          Boolean  @default(false)
+  status          ProductStatus @default(PENDING)
 
   seller     User @relation(fields: [sellerId], references: [id])
   sellerId   Int
@@ -61,5 +62,11 @@ enum Role {
 enum OrderStatus {
   PENDING
   ACCEPTED
+  REJECTED
+}
+
+enum ProductStatus {
+  PENDING
+  APPROVED
   REJECTED
 }
