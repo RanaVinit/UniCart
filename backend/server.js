@@ -8,9 +8,11 @@ app.use(express.json());
 
 const authRoutes = require("./modules/auth/auth.routes");
 const userRoutes = require("./modules/users/user.routes");
+const productRoutes = require("./modules/products/product.routes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/products", productRoutes);
 
 app.get("/", (req, res) => res.send("backend:)"));
 
