@@ -9,10 +9,12 @@ app.use(express.json());
 const authRoutes = require("./modules/auth/auth.routes");
 const userRoutes = require("./modules/users/user.routes");
 const productRoutes = require("./modules/products/product.routes");
+const orderRoutes = require("./modules/orders/order.routes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
 
 app.get("/", (req, res) => res.send("backend:)"));
 
