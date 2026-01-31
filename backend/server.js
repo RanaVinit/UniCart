@@ -1,8 +1,22 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
+require("dotenv").config();
 
-app.get("/", (req, res) => {
-  res.send("Backend:)");
-});
+app.use(cors());
+app.use(express.json());
 
-app.listen(5000, () => console.log("Server started on port 5000"));
+const authRoutes = require("./modules/auth/auth.routes");
+const userRoutes = require("./modules/users/user.routes");
+const productRoutes = require("./modules/products/product.routes");
+const orderRoutes = require("./modules/orders/order.routes");
+
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
+
+app.get("/", (req, res) => res.send("backend:)"));
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
