@@ -28,7 +28,10 @@ model User {
 model Product {
   id              Int      @id @default(autoincrement())
   title           String
+  description     String?
   price           Float
+  imageUrl        String?
+  publicId        String?
   pickupLocation  String
   isSold          Boolean  @default(false)
   status          ProductStatus @default(PENDING)

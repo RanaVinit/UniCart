@@ -105,34 +105,36 @@ exports.getOrdersBySeller = async (sellerId) => {
 };
 
 exports.updateOrderStatus = async (orderId, status, userId) => {
-    const order = await prisma.order.findUnique({
-        where: { id: parseInt(orderId) },
-        include: {
-            product: true
-        }
-    });
-
-    if (!order) {
-        throw new Error("Order not found");
-    }
-
-    // Only the seller of the product can update the order status
-    if (order.product.sellerId !== parseInt(userId)) {
-        throw new Error("Unauthorized to update this order");
-    }
-
-    const updatedOrder = await prisma.order.update({
-        where: { id: parseInt(orderId) },
-        data: { status }
-    });
-
-    // If order is accepted, mark product as sold
-    if (status === 'ACCEPTED') {
-        await prisma.product.update({
-            where: { id: order.productId },
-            data: { isSold: true }
+    return await prisma.$transaction(async (tx) => {
+        const order = await tx.order.findUnique({
+            where: { id: parseInt(orderId) },
+            include: {
+                product: true
+            }
         });
-    }
 
-    return updatedOrder;
+        if (!order) {
+            throw new Error("Order not found");
+        }
+
+        // Only the seller of the product can update the order status
+        if (order.product.sellerId !== parseInt(userId)) {
+            throw new Error("Unauthorized to update this order");
+        }
+
+        const updatedOrder = await tx.order.update({
+            where: { id: parseInt(orderId) },
+            data: { status }
+        });
+
+        // If order is accepted, mark product as sold
+        if (status === 'ACCEPTED') {
+            await tx.product.update({
+                where: { id: order.productId },
+                data: { isSold: true }
+            });
+        }
+
+        return updatedOrder;
+    });
 };

@@ -4,14 +4,37 @@ exports.addProduct = async (data, sellerId) => {
     return await prisma.product.create({
         data: {
             title: data.title,
+            description: data.description,
             price: parseFloat(data.price),
             pickupLocation: data.pickupLocation,
+            imageUrl: data.imageUrl,
+            publicId: data.publicId,
             sellerId: parseInt(sellerId)
         }
     });
 };
 
 exports.getAllProducts = async () => {
+    return await prisma.product.findMany({
+        where: {
+            status: 'APPROVED'
+        },
+        include: {
+            seller: {
+                select: {
+                    name: true,
+                    email: true
+                }
+            }
+        },
+        orderBy: {
+            createdAt: 'desc'
+        }
+    });
+};
+
+// Admin version to see all products including PENDING
+exports.getAdminProducts = async () => {
     return await prisma.product.findMany({
         include: {
             seller: {
@@ -51,10 +74,20 @@ exports.updateProduct = async (id, data, sellerId) => {
         where: { id: parseInt(id) },
         data: {
             title: data.title,
+            description: data.description,
             price: data.price ? parseFloat(data.price) : undefined,
             pickupLocation: data.pickupLocation,
+            imageUrl: data.imageUrl,
+            publicId: data.publicId,
             isSold: data.isSold
         }
+    });
+};
+
+exports.updateProductStatus = async (id, status) => {
+    return await prisma.product.update({
+        where: { id: parseInt(id) },
+        data: { status }
     });
 };
 
