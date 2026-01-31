@@ -150,10 +150,15 @@ const AddProduct = () => {
                 <button
                     type="submit"
                     className="btn-primary-minimal"
-                    style={{ width: '100%', padding: '1rem' }}
+                    style={{ width: '100%', padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
                     disabled={loading}
                 >
-                    {loading ? 'Submitting...' : 'Submit Post'}
+                    {loading ? (
+                        <>
+                            <span className="spinner"></span>
+                            Submitting...
+                        </>
+                    ) : 'Submit Post'}
                 </button>
             </form>
         </div>

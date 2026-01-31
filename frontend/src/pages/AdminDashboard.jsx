@@ -29,7 +29,12 @@ const AdminDashboard = () => {
         }
     };
 
-    if (loading) return <div style={{ textAlign: 'center', padding: '100px' }}>Loading Administration...</div>;
+    if (loading) return (
+        <div style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
+            <span className="spinner" style={{ borderTopColor: 'var(--accent)', width: '40px', height: '40px' }}></span>
+            <p style={{ color: 'var(--text-muted)', fontWeight: 500 }}>Authenticating Administration...</p>
+        </div>
+    );
 
     return (
         <div className="container-minimal fade-in-up" style={{ padding: '4rem 0' }}>

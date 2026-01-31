@@ -9,6 +9,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import { useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const Home = () => (
   <div className="hero-wrapper fade-in-up">
@@ -48,8 +49,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
           <Route path="/orders" element={<Orders />} />
-          <Route path="/add-product" element={<AddProduct />} />
-          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/add-product" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRoute adminOnly={true}><AdminDashboard /></ProtectedRoute>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="*" element={<Home />} />
