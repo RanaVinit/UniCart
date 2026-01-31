@@ -24,13 +24,8 @@ const ProductCard = ({ product, onPurchase }) => {
 
             <div className="card-details">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                    <div>
-                        <h3 className="card-title">{product.title}</h3>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--text-light)' }}>
-                            {product.pickupLocation}
-                        </p>
-                    </div>
-                    <span className="card-price">${product.price}</span>
+                    <h3 className="card-title">{product.title}</h3>
+                    <span className="card-price">₹{product.price}</span>
                 </div>
 
                 <button
