@@ -42,3 +42,4 @@ pids
 Thumbs.db
 
 /generated/prisma
+seed.js
