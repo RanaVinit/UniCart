@@ -6,8 +6,6 @@ const AddProduct = () => {
     const [formData, setFormData] = useState({
         title: '',
         price: '',
-        pickupLocation: '',
-        description: '',
     });
     const [image, setImage] = useState(null);
     const [preview, setPreview] = useState(null);
@@ -33,8 +31,6 @@ const AddProduct = () => {
         const data = new FormData();
         data.append('title', formData.title);
         data.append('price', formData.price);
-        data.append('pickupLocation', formData.pickupLocation);
-        data.append('description', formData.description);
         if (image) {
             data.append('image', image);
         }
@@ -66,49 +62,25 @@ const AddProduct = () => {
                         type="text"
                         name="title"
                         className="input-minimal"
-                        placeholder="e.g. Psychology Textbook Vol. 2"
+                        placeholder="e.g. Python Book"
                         value={formData.title}
                         onChange={handleChange}
                         required
                     />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
-                    <div className="form-group">
-                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Price (₹)</label>
-                        <input
-                            type="number"
-                            name="price"
-                            className="input-minimal"
-                            placeholder="0.00"
-                            value={formData.price}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Pickup Location</label>
-                        <input
-                            type="text"
-                            name="pickupLocation"
-                            className="input-minimal"
-                            placeholder="e.g. Library Cafe"
-                            value={formData.pickupLocation}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                </div>
-
                 <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Description</label>
-                    <textarea
-                        name="description"
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Price (₹)</label>
+                    <input
+                        type="number"
+                        name="price"
                         className="input-minimal"
-                        style={{ minHeight: '100px', resize: 'vertical' }}
-                        placeholder="Briefly describe the condition and any other details..."
-                        value={formData.description}
+                        placeholder="0.00"
+                        min="0"
+                        step="1"
+                        value={formData.price}
                         onChange={handleChange}
+                        required
                     />
                 </div>
 
@@ -133,7 +105,6 @@ const AddProduct = () => {
                             <img src={preview} alt="Preview" style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px' }} />
                         ) : (
                             <div>
-                                <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📸</div>
                                 <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Click to upload image</p>
                             </div>
                         )}
