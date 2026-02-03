@@ -1,4 +1,6 @@
 const prisma = require("../../prismaClient");
+const mailService = require("../../utils/mailService");
+const jwt = require("jsonwebtoken");
 
 exports.createOrder = async (productId, buyerId) => {
     // Check if product exists and is not sold
@@ -43,14 +45,23 @@ exports.createOrder = async (productId, buyerId) => {
         throw new Error("You have a pending order. Please wait for it to be approved or rejected.");
     }
 
-    return await prisma.order.create({
+    const order = await prisma.order.create({
         data: {
             productId: parseInt(productId),
             buyerId: parseInt(buyerId),
             status: 'PENDING'
         },
         include: {
-            product: true,
+            product: {
+                include: {
+                    seller: {
+                        select: {
+                            name: true,
+                            email: true
+                        }
+                    }
+                }
+            },
             buyer: {
                 select: {
                     name: true,
@@ -59,6 +70,33 @@ exports.createOrder = async (productId, buyerId) => {
             }
         }
     });
+
+    // Generate secure tokens for email actions
+    const acceptToken = jwt.sign(
+        { orderId: order.id, status: 'ACCEPTED', sellerId: order.product.sellerId },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+    );
+    const rejectToken = jwt.sign(
+        { orderId: order.id, status: 'REJECTED', sellerId: order.product.sellerId },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+    );
+
+    // Send notification to seller
+    try {
+        await mailService.sendSellerOrderNotification(
+            order.product.seller,
+            order.buyer,
+            order.product,
+            acceptToken,
+            rejectToken
+        );
+    } catch (emailError) {
+        console.error("Failed to send seller notification email:", emailError);
+    }
+
+    return order;
 };
 
 exports.getOrdersByBuyer = async (buyerId) => {
@@ -124,7 +162,19 @@ exports.updateOrderStatus = async (orderId, status, userId) => {
 
         const updatedOrder = await tx.order.update({
             where: { id: parseInt(orderId) },
-            data: { status }
+            data: { status },
+            include: {
+                product: {
+                    include: {
+                        seller: {
+                            select: { name: true, email: true }
+                        }
+                    }
+                },
+                buyer: {
+                    select: { name: true, email: true }
+                }
+            }
         });
 
         // If order is accepted, mark product as sold
@@ -133,6 +183,24 @@ exports.updateOrderStatus = async (orderId, status, userId) => {
                 where: { id: order.productId },
                 data: { isSold: true }
             });
+        }
+
+        // Send notification to buyer
+        try {
+            if (status === 'ACCEPTED') {
+                await mailService.sendBuyerAcceptanceEmail(
+                    updatedOrder.buyer,
+                    updatedOrder.product.seller,
+                    updatedOrder.product
+                );
+            } else if (status === 'REJECTED') {
+                await mailService.sendBuyerRejectionEmail(
+                    updatedOrder.buyer,
+                    updatedOrder.product
+                );
+            }
+        } catch (emailError) {
+            console.error("Failed to send buyer notification email:", emailError);
         }
 
         return updatedOrder;

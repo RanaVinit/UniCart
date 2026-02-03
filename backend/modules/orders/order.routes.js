@@ -2,6 +2,14 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../../middleware/auth.middleware");
 const controller = require("./order.controller");
+const actionController = require("./orderAction.controller");
+
+/**
+ * @route   GET /api/orders/action
+ * @desc    Accept or reject an order from email link
+ * @access  Public (Signed Token)
+ */
+router.get("/action", actionController.handleEmailAction);
 
 /**
  * @route   POST /api/orders
