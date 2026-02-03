@@ -1,104 +1,139 @@
 # UniCart Campus Marketplace
 
-A secure, high-performance peer-to-peer trading platform designed for university environments. This project implements fundamental Full-Stack Engineering concepts, including **Stateless Authentication**, **Relational Database Normalization**, and a **Scalable Service Architecture** designed for transaction integrity.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
----
-
-## Key Features
-
-- **Stateless Authentication**: custom JWT implementation with Bcrypt password hashing for secure, scalable session management.
-- **Atomic Transactions**: Robust order processing logic that ensures data consistency between buyers, sellers, and inventory states.
-- **Custom Design System**: A "Clinical Minimalist" UI engine built with **Vanilla CSS**, prioritizing render performance and strict typographic hierarchy over heavy frameworks.
-- **Type-Safe Data Access**: Prisma ORM implementation ensuring rigorous schema validation and query efficiency.
+**UniCart** is a high-performance, peer-to-peer trading platform engineered specifically for university ecosystems. It leverages **Stateless Authentication**, **Relational Data Normalization**, and **Automated Communication Pipelines** to provide a seamless and secure experience for students.
 
 ---
 
 ## System Architecture
 
-### Data Processing Pipeline
-The system processes user interactions through a layered architecture to ensure separation of concerns and security.
+UniCart follows a clean, layered architecture designed for separation of concerns and high scalability.
 
 ```mermaid
 graph TD
-    Client[React Client] -->|JSON Payload| Gateway[API Gateway / Express]
-    Gateway -->|Verify Signature| Auth[JWT Middleware]
-    Auth -->|Validated Request| Controller[Business Logic]
-    Controller -->|Query| ORM[Prisma Client]
-    ORM -->|Persist| DB[(PostgreSQL)]
-```
+    subgraph Client_Layer [Frontend: React & Vanilla CSS]
+        UI[User Interface]
+        State[Auth State Management]
+    end
 
-### Database Schema Relationships
-Designed with 3NF (Third Normal Form) to eliminate redundancy and enforce referential integrity.
+    subgraph Service_Layer [Backend: Express.js]
+        API[REST API Gateway]
+        Auth[JWT Middleware]
+        OrderSvc[Order Service]
+        MailSvc[SendGrid Mailer]
+    end
 
-```mermaid
-erDiagram
-    USER ||--o{ PRODUCT : "lists"
-    USER ||--o{ ORDER : "places/receives"
-    PRODUCT ||--|| ORDER : "is item of"
+    subgraph Persistence_Layer [Data & Storage]
+        DB[(PostgreSQL)]
+        Cloud[Cloudinary CDN]
+    end
 
-    USER {
-        int id PK
-        string email UK
-        string password_hash
-    }
-    PRODUCT {
-        int id PK
-        decimal price
-        enum status
-    }
-    ORDER {
-        int id PK
-        timestamp created_at
-    }
+    UI -->|JSON + JWT| API
+    API --> Auth
+    Auth --> OrderSvc
+    OrderSvc -->|ORM Queries| DB
+    OrderSvc -->|Email Triggers| MailSvc
+    UI -->|Image Upload| Cloud
 ```
 
 ---
 
-## Core Concepts
+## Key Features
 
-### Why Vanilla CSS?
-Modern frameworks often introduce significant bundle overhead. This project utilizes a custom CSS architecture to achieve O(1) style resolution and sub-100ms First Contentful Paint (FCP), complying with the "Clinical Minimalist" design philosophy.
+### Security & core
+- **Stateless Authentication**: Custom JWT implementation with Bcrypt hashing for secure, lightweight session management.
+- **Transaction Integrity**: Atomic order processing that prevents race conditions and ensures item uniqueness.
 
-### Transaction Integrity
-Unlike standard social applications, a marketplace requires strict consistency. The backend creates a transactional lock/check during the order process:
-1.  **Verify** Product Availability.
-2.  **Lock** Product State.
-3.  **Create** Order Record.
-This prevents race conditions where two users might buy the same unique item simultaneously.
+### Automated Communications
+- **SendGrid Integration**: Real-time notifications for every stage of the trade.
+- **One-Click Email Actions**: Securely **Accept** or **Reject** orders directly from your inbox using signed tokens.
+
+### Intelligent Catalog
+- **Privacy-First Discovery**: Automatically filters out your own listings from your feed.
+- **Clean Marketplace**: Hidden sold items and real-time status updates ensure a relevant shopping experience.
+
+### Design Philosophy
+- **"Clinical Minimalist" UI**: Built with pure **Vanilla CSS** for sub-100ms First Contentful Paint (FCP) and maximum performance.
+
+---
+
+## One-Click Order Flow
+
+Our unique email-driven workflow minimizes friction for sellers, allowing them to finalize sales without even opening the app.
+
+```mermaid
+sequenceDiagram
+    participant Buyer
+    participant Backend
+    participant Seller
+    participant SendGrid
+
+    Buyer->>Backend: Places Order Request
+    Backend->>Backend: Signs Secure JWT Tokens
+    Backend->>SendGrid: Triggers Notification
+    SendGrid-->>Seller: Receives Email w/ Buttons
+    Note over Seller: [Accept] | [Reject]
+    Seller->>Backend: Clicks "Accept" (Safe Link)
+    Backend->>Backend: Verifies Token & Updates DB
+    Backend-->>Buyer: Sends Contact Details Email
+    Backend-->>Seller: Shows Success Page
+```
+
+---
+
+## Technical Stack
+
+- **Frontend**: React (Vite), Vanilla CSS, Lucide Icons.
+- **Backend**: Node.js, Express.js.
+- **Database**: PostgreSQL with Prisma ORM.
+- **Media**: Cloudinary CDN for image hosting.
+- **Email**: SendGrid API.
 
 ---
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js v20+
-- PostgreSQL
+- **Node.js**: v20 or higher
+- **PostgreSQL**: Local or Cloud (Neon/Supabase)
 
-### Build and Run
-1. **Backend Initialization**:
-   ```bash
-   cd backend
-   npm install
-   npx prisma db push    # Sync Schema
-   nodemon server.js     # Start Server
-   ```
+### 1. Environment Configuration
+Create a `.env` file in the `backend` directory:
+```env
+DATABASE_URL="your_postgresql_url"
+JWT_SECRET="your_secret"
+CLOUDINARY_CLOUD_NAME="your_name"
+CLOUDINARY_API_KEY="your_key"
+CLOUDINARY_API_SECRET="your_secret"
+SENDGRID_API_KEY="your_api_key"
+FROM_EMAIL="your_verified_sender"
+BACKEND_URL="http://localhost:5000"
+```
 
-2. **Frontend Initialization**:
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
+### 2. Installation & Launch
+```bash
+# Backend Setup
+cd backend
+npm install
+npx prisma db push
+npm run dev
+
+# Frontend Setup (New Tab)
+cd frontend
+npm install
+npm run dev
+```
 
 ---
 
 ## Future Roadmap
-
-- [ ] **Real-Time Sockets**: Bi-directional communication for instant buyer-seller messaging.
-- [ ] **Payment Orchestration**: Integration with Stripe Connect for escrow-based funds handling.
-- [ ] **Next.js Migration**: Implementing Server-Side Rendering (SSR) for SEO optimization.
+- [ ] **Real-Time Sockets**: Instant in-app messaging between buyers and sellers.
+- [ ] **Advanced Search**: Fuzzy matching and category-based filtering.
+- [ ] **Reviews & Ratings**: Building trust in the campus community.
 
 ---
 
-## Contributing
-This project is part of a deep dive into secure e-commerce architecture.
+## License
+Distibuted under the MIT License. See `LICENSE` for more information.
