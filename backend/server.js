@@ -4,10 +4,16 @@ const app = express();
 require("dotenv").config();
 
 app.use(cors({
-    origin: true, // Temporarily allow all for debugging CORS issues
+    origin: (origin, callback) => callback(null, true),
     credentials: true,
 }));
 app.use(express.json());
+
+// Request Logger to see if traffic reaches Railway
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    next();
+});
 
 const authRoutes = require("./modules/auth/auth.routes");
 const userRoutes = require("./modules/users/user.routes");
