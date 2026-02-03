@@ -2,11 +2,12 @@ const express = require("express");
 const router = express.Router();
 const controller = require("./product.controller");
 const auth = require("../../middleware/auth.middleware");
+const optionalAuth = require("../../middleware/optionalAuth.middleware");
 const admin = require("../../middleware/admin.middleware");
 const upload = require("../../utils/upload");
 
 router.post("/", auth, upload.single("image"), controller.addProduct);
-router.get("/", controller.getAllProducts);
+router.get("/", optionalAuth, controller.getAllProducts);
 router.get("/admin", auth, admin, controller.getAdminProducts);
 router.get("/:id", controller.getProductById);
 router.put("/:id", auth, upload.single("image"), controller.updateProduct);

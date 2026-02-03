@@ -14,10 +14,14 @@ exports.addProduct = async (data, sellerId) => {
     });
 };
 
-exports.getAllProducts = async () => {
+exports.getAllProducts = async (currentUserId) => {
     return await prisma.product.findMany({
         where: {
-            status: 'APPROVED'
+            status: 'APPROVED',
+            isSold: false, // Don't show sold products in catalog
+            NOT: currentUserId ? {
+                sellerId: parseInt(currentUserId)
+            } : undefined
         },
         include: {
             seller: {
