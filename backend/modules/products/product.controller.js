@@ -16,7 +16,8 @@ exports.addProduct = async (req, res) => {
 
 exports.getAllProducts = async (req, res) => {
     try {
-        const products = await service.getAllProducts(req.user?.id);
+        const { search, category } = req.query;
+        const products = await service.getAllProducts(req.user?.id, { search, category });
         res.status(200).json(products);
     } catch (err) {
         res.status(400).json({ error: err.message });

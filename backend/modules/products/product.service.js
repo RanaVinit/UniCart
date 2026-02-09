@@ -4,9 +4,8 @@ exports.addProduct = async (data, sellerId) => {
     return await prisma.product.create({
         data: {
             title: data.title,
-            description: data.description,
             price: parseFloat(data.price),
-            pickupLocation: data.pickupLocation,
+            category: data.category || 'OTHER',
             imageUrl: data.imageUrl,
             publicId: data.publicId,
             sellerId: parseInt(sellerId)
@@ -14,15 +13,30 @@ exports.addProduct = async (data, sellerId) => {
     });
 };
 
-exports.getAllProducts = async (currentUserId) => {
+exports.getAllProducts = async (currentUserId, filters = {}) => {
+    const { search, category } = filters;
+    
+    const where = {
+        status: 'APPROVED',
+        isSold: false,
+        NOT: currentUserId ? {
+            sellerId: parseInt(currentUserId)
+        } : undefined
+    };
+
+    if (search) {
+        where.title = {
+            contains: search,
+            mode: 'insensitive'
+        };
+    }
+
+    if (category && category !== 'ALL') {
+        where.category = category;
+    }
+
     return await prisma.product.findMany({
-        where: {
-            status: 'APPROVED',
-            isSold: false, // Don't show sold products in catalog
-            NOT: currentUserId ? {
-                sellerId: parseInt(currentUserId)
-            } : undefined
-        },
+        where,
         include: {
             seller: {
                 select: {
@@ -78,9 +92,8 @@ exports.updateProduct = async (id, data, sellerId) => {
         where: { id: parseInt(id) },
         data: {
             title: data.title,
-            description: data.description,
             price: data.price ? parseFloat(data.price) : undefined,
-            pickupLocation: data.pickupLocation,
+            category: data.category,
             imageUrl: data.imageUrl,
             publicId: data.publicId,
             isSold: data.isSold

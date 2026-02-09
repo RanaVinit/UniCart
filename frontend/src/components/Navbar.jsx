@@ -1,9 +1,22 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Search } from 'lucide-react';
 
 const Navbar = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+        } else {
+            navigate('/products');
+        }
+    };
 
     const handleLogout = () => {
         logout();
@@ -13,9 +26,29 @@ const Navbar = () => {
     return (
         <header className="header-minimal">
             <nav className="container-minimal nav-minimal">
-                <NavLink to="/" className="brand-logo">
-                    UniCart.
-                </NavLink>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flex: 1 }}>
+                    <NavLink to="/" className="brand-logo">
+                        UniCart.
+                    </NavLink>
+
+                    {location.pathname === '/products' && (
+                        <form onSubmit={handleSearch} style={{ width: '100%', maxWidth: '220px', position: 'relative' }}>
+                            <Search
+                                size={18}
+                                style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}
+                            />
+                            <input
+                                type="text"
+                                placeholder="Search..."
+                                className="input-minimal"
+                                style={{ paddingLeft: '2.8rem', height: '40px', borderRadius: '50px' }}
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </form>
+                    )}
+                </div>
+
                 <div className="nav-links">
                     <NavLink to="/products" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Catalog</NavLink>
                     {user ? (

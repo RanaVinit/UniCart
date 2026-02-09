@@ -24,16 +24,17 @@
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
 }
 
 /* ... existing logic ... */
 
 .input-minimal {
   width: 100%;
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius-md);
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--radius-xl);
   border: 1px solid var(--border-light);
   background: white;
   font-family: inherit;
@@ -44,20 +45,20 @@
 
 .input-minimal:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.05);
 }
 
 .card-minimal {
   background: white;
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-md);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px -10px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card-minimal:hover {
-  box-shadow: var(--shadow-xl);
-  transform: translateY(-2px);
+  box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
 }
 
 /* Glass effect for overlays */
@@ -80,7 +81,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 * {
@@ -246,37 +249,41 @@ ul {
 /* --- Grid & Cards --- */
 .grid-minimal {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2.5rem;
-  margin-top: 3rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
 }
 
 .product-card {
   background: white;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid var(--border-light);
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
 }
 
 .product-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-xl);
-  border-color: transparent;
+  transform: translateY(-6px);
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.12);
+  border-color: #f1f5f9;
 }
 
 .img-container {
-  aspect-ratio: 1;
-  background: #f1f5f9;
+  aspect-ratio: 16/11;
+  background: #f8fafc;
   position: relative;
   overflow: hidden;
+  margin: 12px;
+  border-radius: 20px;
 }
 
 .img-container img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .product-card:hover img {

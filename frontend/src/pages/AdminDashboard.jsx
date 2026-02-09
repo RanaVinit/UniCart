@@ -64,7 +64,7 @@ const AdminDashboard = () => {
                                         )}
                                         <div>
                                             <div style={{ fontWeight: 600 }}>{product.title}</div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{product.pickupLocation}</div>
+                                            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{product.category}</div>
                                         </div>
                                     </div>
                                 </td>

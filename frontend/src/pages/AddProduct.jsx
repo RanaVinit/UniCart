@@ -6,6 +6,7 @@ const AddProduct = () => {
     const [formData, setFormData] = useState({
         title: '',
         price: '',
+        category: 'OTHER'
     });
     const [image, setImage] = useState(null);
     const [preview, setPreview] = useState(null);
@@ -31,6 +32,7 @@ const AddProduct = () => {
         const data = new FormData();
         data.append('title', formData.title);
         data.append('price', formData.price);
+        data.append('category', formData.category);
         if (image) {
             data.append('image', image);
         }
@@ -82,6 +84,24 @@ const AddProduct = () => {
                         onChange={handleChange}
                         required
                     />
+                </div>
+
+                <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Category</label>
+                    <select
+                        name="category"
+                        className="input-minimal"
+                        value={formData.category}
+                        onChange={handleChange}
+                        required
+                        style={{ width: '100%', appearance: 'none' }}
+                    >
+                        <option value="ELECTRONICS">Electronics</option>
+                        <option value="BOOKS">Books</option>
+                        <option value="FASHION">Fashion</option>
+                        <option value="ACADEMICS">Academics</option>
+                        <option value="OTHER">Other</option>
+                    </select>
                 </div>
 
                 <div className="form-group" style={{ marginBottom: '2.5rem' }}>
