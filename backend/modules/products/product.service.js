@@ -5,7 +5,7 @@ exports.addProduct = async (data, sellerId) => {
         data: {
             title: data.title,
             price: parseFloat(data.price),
-            category: data.category || 'OTHER',
+            categories: data.categories || ['OTHER'],
             imageUrl: data.imageUrl,
             publicId: data.publicId,
             sellerId: parseInt(sellerId)
@@ -15,7 +15,7 @@ exports.addProduct = async (data, sellerId) => {
 
 exports.getAllProducts = async (currentUserId, filters = {}) => {
     const { search, category } = filters;
-    
+
     const where = {
         status: 'APPROVED',
         isSold: false,
@@ -32,7 +32,9 @@ exports.getAllProducts = async (currentUserId, filters = {}) => {
     }
 
     if (category && category !== 'ALL') {
-        where.category = category;
+        where.categories = {
+            has: category
+        };
     }
 
     return await prisma.product.findMany({
@@ -93,7 +95,7 @@ exports.updateProduct = async (id, data, sellerId) => {
         data: {
             title: data.title,
             price: data.price ? parseFloat(data.price) : undefined,
-            category: data.category,
+            categories: data.categories,
             imageUrl: data.imageUrl,
             publicId: data.publicId,
             isSold: data.isSold

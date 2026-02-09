@@ -4,5 +4,5 @@ CREATE TYPE "Category" AS ENUM ('ELECTRONICS', 'BOOKS', 'FASHION', 'ACADEMICS', 
 -- AlterTable
 ALTER TABLE "Product" 
 ADD COLUMN "category" "Category" NOT NULL DEFAULT 'OTHER',
-DROP COLUMN "description",
-DROP COLUMN "pickupLocation";
+DROP COLUMN IF EXISTS "description",
+DROP COLUMN IF EXISTS "pickupLocation";

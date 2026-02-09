@@ -6,12 +6,19 @@ const AddProduct = () => {
     const [formData, setFormData] = useState({
         title: '',
         price: '',
-        category: 'OTHER'
+        categories: []
     });
-    const [image, setImage] = useState(null);
-    const [preview, setPreview] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
+
+    const CATEGORIES = ['ELECTRONICS', 'BOOKS', 'FASHION', 'ACADEMICS', 'OTHER'];
+
+    const toggleCategory = (cat) => {
+        setFormData(prev => {
+            const categories = prev.categories.includes(cat)
+                ? prev.categories.filter(c => c !== cat)
+                : [...prev.categories, cat];
+            return { ...prev, categories };
+        });
+    };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,12 +34,23 @@ const AddProduct = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (formData.categories.length === 0) {
+            alert('Please select at least one category');
+            return;
+        }
+
         setLoading(true);
 
         const data = new FormData();
         data.append('title', formData.title);
         data.append('price', formData.price);
-        data.append('category', formData.category);
+
+        // Append each category individually so it's received as an array
+        formData.categories.forEach(cat => {
+            data.append('categories', cat);
+        });
+
         if (image) {
             data.append('image', image);
         }
@@ -87,21 +105,34 @@ const AddProduct = () => {
                 </div>
 
                 <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Category</label>
-                    <select
-                        name="category"
-                        className="input-minimal"
-                        value={formData.category}
-                        onChange={handleChange}
-                        required
-                        style={{ width: '100%', appearance: 'none' }}
-                    >
-                        <option value="ELECTRONICS">Electronics</option>
-                        <option value="BOOKS">Books</option>
-                        <option value="FASHION">Fashion</option>
-                        <option value="ACADEMICS">Academics</option>
-                        <option value="OTHER">Other</option>
-                    </select>
+                    <label style={{ display: 'block', marginBottom: '0.85rem', fontWeight: 600, fontSize: '0.9rem', color: 'var(--primary)' }}>
+                        Categories
+                    </label>
+                    <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap' }}>
+                        {CATEGORIES.map(cat => (
+                            <button
+                                key={cat}
+                                type="button"
+                                onClick={() => toggleCategory(cat)}
+                                style={{
+                                    cursor: 'pointer',
+                                    border: formData.categories.includes(cat) ? 'none' : '1px solid #e2e8f0',
+                                    background: formData.categories.includes(cat) ? '#000000' : '#ffffff',
+                                    color: formData.categories.includes(cat) ? '#ffffff' : '#64748b',
+                                    transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                                    padding: '8px 18px',
+                                    fontSize: '0.8rem',
+                                    fontWeight: 600,
+                                    borderRadius: '50px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}
+                            >
+                                {cat.charAt(0) + cat.slice(1).toLowerCase()}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 <div className="form-group" style={{ marginBottom: '2.5rem' }}>

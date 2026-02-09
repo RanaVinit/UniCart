@@ -19,10 +19,12 @@ const ProductCard = ({ product, onPurchase }) => {
             </div>
 
             <div className="card-details" style={{ padding: '0 1.5rem 1.5rem 1.5rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <div style={{ marginBottom: '0.75rem' }}>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--accent)', fontWeight: 600, textTransform: 'capitalize' }}>
-                        {product.category.toLowerCase()}
-                    </span>
+                <div style={{ marginBottom: '0.75rem', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                    {product.categories && product.categories.map((cat, idx) => (
+                        <span key={idx} style={{ fontSize: '0.7rem', color: 'var(--accent)', fontWeight: 600, textTransform: 'capitalize', background: 'rgba(37, 99, 235, 0.05)', padding: '2px 8px', borderRadius: '4px' }}>
+                            {cat.toLowerCase()}
+                        </span>
+                    ))}
                 </div>
 
                 <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: 'var(--primary)', fontWeight: 700, lineHeight: 1.3 }}>

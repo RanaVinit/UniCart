@@ -2,8 +2,14 @@ const service = require("./product.service");
 
 exports.addProduct = async (req, res) => {
     try {
+        let categories = req.body.categories;
+        if (categories && !Array.isArray(categories)) {
+            categories = [categories];
+        }
+
         const productData = {
             ...req.body,
+            categories,
             imageUrl: req.file ? req.file.path : undefined,
             publicId: req.file ? req.file.filename : undefined
         };
@@ -35,8 +41,14 @@ exports.getAdminProducts = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
     try {
+        let categories = req.body.categories;
+        if (categories && !Array.isArray(categories)) {
+            categories = [categories];
+        }
+
         const productData = {
             ...req.body,
+            categories,
             imageUrl: req.file ? req.file.path : undefined,
             publicId: req.file ? req.file.filename : undefined
         };
